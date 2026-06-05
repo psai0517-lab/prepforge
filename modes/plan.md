@@ -7,11 +7,18 @@ Generate a structured, time-boxed preparation roadmap calibrated to the candidat
 - `role` — job function (e.g., data-engineer, backend-engineer, ml-engineer)
 - `level` — target seniority (e.g., senior, staff, L5, ICT5)
 - `data/profile.yml` — candidate background, strengths, gaps
+- `data/resume.md` — full work history and skills (if exists; enables precise gap analysis)
 
 ## Execution
 
 ### Step 1 — Normalize level
 Map the input level to the universal level (Junior/Mid/Senior/Staff/Principal) using the table in `_shared.md`. All subsequent calibration uses the universal level.
+
+### Step 1b — Resume-based gap detection (if `data/resume.md` exists)
+Before computing topic weights, scan the resume against the domain profile's core technologies:
+- For each required technology in the domain profile, check if it appears in the resume
+- Mark as **confirmed** (in resume with metrics), **mentioned** (listed but no depth shown), or **absent**
+- Absent required technologies automatically get elevated study weight regardless of the pillar weights below
 
 ### Step 2 — Load domain profile
 Check if `domain-profiles/{company}-{role}.md` exists. If yes, load it. If not, use WebSearch to gather:

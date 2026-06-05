@@ -10,10 +10,11 @@ Built on [Claude Code](https://claude.ai/code). No web app. No subscriptions. Ev
 
 | Command | What you get |
 |---------|-------------|
-| `/prep plan apple data-engineer staff` | Personalized study plan with timeline, topic weights, and weekly milestones |
-| `/prep mock spark-internals apple` | Scored mock interview with Apple's interviewer persona |
+| `/prep resume update` | Add or update your resume — paste text, provide a file path, or describe your experience |
+| `/prep plan apple data-engineer staff` | Personalized study plan with resume-aware gap analysis and timeline |
+| `/prep mock spark-internals apple` | Scored mock interview — interviewer references your actual background |
 | `/prep system-design "design a deletion system at scale" netflix` | Full 45-min system design round with rubric scoring |
-| `/prep behavioral amazon` | STAR+R behavioral practice mapped to Amazon's 14 Leadership Principles |
+| `/prep behavioral amazon` | STAR+R practice — surfaces story candidates from your resume |
 | `/prep drill kafka` | Rapid-fire concept drills on Kafka internals |
 | `/prep debrief` | Gap analysis across all your sessions — what to focus on next |
 | `/prep ingest` | Add real interview experiences from 1point3acres or Blind |
@@ -33,13 +34,19 @@ git clone https://github.com/psai0517-lab/prepforge
 cd prepforge
 ```
 
-### 3. Set up your profile
+### 3. Set up your profile and resume
 ```bash
 cp templates/profile.example.yml data/profile.yml
 # Edit data/profile.yml with your background and target roles
 ```
 
-Or skip this step — just run `/prep` and the skill will guide you through onboarding.
+Then add your resume inside Claude Code:
+```
+/prep resume update
+```
+Paste your CV, provide a file path, or describe your experience. The skill normalizes it to `data/resume.md` and uses it across all modes.
+
+Or skip both steps — run `/prep` and the skill will guide you through onboarding.
 
 ### 4. Start Claude Code
 ```bash

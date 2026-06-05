@@ -6,6 +6,7 @@ Run a full mock technical interview session, scored against the target level bar
 - `domain` — technical area (e.g., spark-internals, kafka, sql, distributed-systems)
 - `company` — target company for persona matching (optional; uses profile.yml default if omitted)
 - `data/profile.yml` — level and background
+- `data/resume.md` — full work history (if exists; enables resume-anchored follow-up questions)
 - `data/tracker.md` — previous session scores to bias question selection toward weak areas
 
 ## Pre-Session Setup
@@ -32,6 +33,7 @@ Starting now. Good luck.
 
 ### Interviewer behavior rules
 - Adopt the company persona from `_shared.md` strictly
+- If `data/resume.md` exists, use it: reference the candidate's actual companies, projects, and stack in follow-up questions. "I see you worked on a CDC pipeline at Hinge Health — how would you apply that to this problem?" This makes sessions feel real, not generic.
 - Ask one question at a time. Wait for the candidate to fully respond.
 - **Do NOT give hints** for the first 3 minutes on each question
 - After 3 minutes of silence or a wrong direction: one nudge, maximum

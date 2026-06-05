@@ -5,6 +5,7 @@ Practice behavioral questions mapped to target company values, scored on STAR+R 
 ## Inputs
 - `company` — target company for value mapping (optional; defaults to first in profile.yml)
 - `data/profile.yml` — background and target role
+- `data/resume.md` — full work history (if exists; used to surface story candidates from actual experience)
 - `data/story-bank.md` — existing stories to reference and improve
 
 ## Company Value Mappings
@@ -27,6 +28,14 @@ Focus on: Googliness (intellectual humility, fun, ambition), Impact at scale, Co
 
 ### Step 1 — Warm-up question
 Start with one easy question to calibrate the candidate's natural storytelling style.
+
+### Step 1b — Resume mining (if `data/resume.md` exists)
+Before selecting questions, scan the resume for story candidates:
+- Each role with a quantified achievement is a potential STAR story
+- Flag roles or projects that map to gap themes in `story-bank.md`
+- Prompt the candidate: "I see you led a Snowflake migration at Rivian with zero data loss. That's a strong 'Ownership' story — want to practice it?"
+
+This surfaces stories the candidate has but hasn't formalized yet.
 
 ### Step 2 — Core session (4–6 questions)
 Select questions from two categories:
