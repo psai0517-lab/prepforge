@@ -1,0 +1,48 @@
+{
+  "company": "amazon",
+  "last_updated": "2026-06-04",
+  "experiences": [
+    {
+      "role": "data-engineer",
+      "level": "senior",
+      "stage": "onsite",
+      "date": "2026-02",
+      "source": "community",
+      "questions": [
+        {
+          "text": "Design Amazon's product catalog pipeline — ingest from millions of third-party sellers, normalize and validate, and serve to search and recommendations. Handle schema inconsistencies, duplicates, and malicious sellers.",
+          "type": "system-design",
+          "domain": "distributed-systems",
+          "difficulty": "hard"
+        },
+        {
+          "text": "Your EMR job that processes daily order data is suddenly running 3x longer than baseline. Walk me through your investigation and remediation process.",
+          "type": "domain-knowledge",
+          "domain": "spark-internals",
+          "difficulty": "medium"
+        },
+        {
+          "text": "Given a list of orders with customer_id, product_id, and timestamp, find all customers who purchased the same product within 24 hours of each other (for fraud detection).",
+          "type": "coding",
+          "domain": "python-ds-algo",
+          "difficulty": "medium"
+        },
+        {
+          "text": "Tell me about a time you took ownership of a problem that was outside your defined scope. What was the situation and what did you do?",
+          "type": "behavioral",
+          "domain": "leadership-principles",
+          "lp": "Ownership",
+          "difficulty": "medium"
+        },
+        {
+          "text": "Describe a time you had to make a significant technical decision with incomplete information. How did you decide what to do?",
+          "type": "behavioral",
+          "domain": "leadership-principles",
+          "lp": "Bias for Action",
+          "difficulty": "medium"
+        }
+      ],
+      "notes": "Every round had 2 LP questions minimum. Bar Raiser asked for very specific numbers and challenged 'we improved performance' with 'how do you know it was your change?'. STAR format strictly enforced."
+    }
+  ]
+}

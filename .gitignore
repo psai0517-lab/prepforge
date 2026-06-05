@@ -1,0 +1,7 @@
+data/profile.yml
+data/tracker.md
+data/story-bank.md
+data/history/
+*.pyc
+__pycache__/
+.DS_Store

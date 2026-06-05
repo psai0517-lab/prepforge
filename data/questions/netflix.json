@@ -1,0 +1,46 @@
+{
+  "company": "netflix",
+  "last_updated": "2026-06-04",
+  "experiences": [
+    {
+      "role": "data-engineer-5",
+      "level": "staff",
+      "stage": "onsite",
+      "date": "2026-03",
+      "source": "community",
+      "questions": [
+        {
+          "text": "Design Netflix's data deletion system. GDPR requests must propagate within 30 days, CCPA within 45 days. The data is spread across 1,300+ datasets in heterogeneous storage systems including Hive, Iceberg, Elasticsearch, and Cassandra.",
+          "type": "system-design",
+          "domain": "distributed-systems",
+          "difficulty": "hard"
+        },
+        {
+          "text": "A Flink job consuming from Kafka is producing duplicate records in your S3 data lake despite using Kafka transactions. Walk me through how you would debug and fix this.",
+          "type": "domain-knowledge",
+          "domain": "flink",
+          "difficulty": "hard"
+        },
+        {
+          "text": "What are the tradeoffs between Apache Iceberg, Delta Lake, and Apache Hudi? Netflix uses Iceberg heavily — what design decisions in Iceberg made it the right choice for a petabyte-scale data lake?",
+          "type": "domain-knowledge",
+          "domain": "data-lake",
+          "difficulty": "medium"
+        },
+        {
+          "text": "Design Netflix's A/B experimentation pipeline — from experiment assignment and event logging through metric computation and statistical significance testing. Assume 200M subscribers and hundreds of concurrent experiments.",
+          "type": "system-design",
+          "domain": "distributed-systems",
+          "difficulty": "hard"
+        },
+        {
+          "text": "How do you implement exactly-once semantics in Spark Structured Streaming when writing to S3? What are the failure modes and how do you test them?",
+          "type": "domain-knowledge",
+          "domain": "spark-streaming",
+          "difficulty": "hard"
+        }
+      ],
+      "notes": "Very open-ended prompts — no constraints given upfront. Interviewer let silence go for 2+ minutes. Heavy focus on correctness and failure modes. 'What breaks first?' asked in every round."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "company": "apple",
+  "last_updated": "2026-06-04",
+  "experiences": [
+    {
+      "role": "data-engineer",
+      "level": "staff",
+      "stage": "onsite",
+      "date": "2026-01",
+      "source": "community",
+      "questions": [
+        {
+          "text": "Design a real-time pipeline to aggregate health metrics from 500 million Apple Watch devices. The system must support differential privacy guarantees and process data both on-device and in the cloud.",
+          "type": "system-design",
+          "domain": "distributed-systems",
+          "difficulty": "hard"
+        },
+        {
+          "text": "You have a Spark job that runs fine on 10GB of data but fails with OutOfMemoryError on 1TB. Walk me through your debugging process step by step.",
+          "type": "domain-knowledge",
+          "domain": "spark-internals",
+          "difficulty": "hard"
+        },
+        {
+          "text": "Explain the difference between a narrow and wide transformation in Spark. What happens during a shuffle and how would you minimize shuffle overhead in a join-heavy pipeline?",
+          "type": "domain-knowledge",
+          "domain": "spark-internals",
+          "difficulty": "medium"
+        },
+        {
+          "text": "Design a schema evolution strategy for a data pipeline that serves 50 downstream teams with different SLAs. Some teams need backward compatibility, others can tolerate breaking changes.",
+          "type": "system-design",
+          "domain": "data-modeling",
+          "difficulty": "hard"
+        },
+        {
+          "text": "Given a table of user events with timestamps, write a SQL query to find users who had sessions of more than 30 minutes where a 'session' is defined as a sequence of events with no gap longer than 5 minutes.",
+          "type": "sql",
+          "domain": "sql",
+          "difficulty": "hard"
+        }
+      ],
+      "notes": "Interviewer was very terse. Asked 'why not X?' multiple times. Deep follow-ups on Spark memory model. Privacy came up in almost every system design question."
+    }
+  ]
+}

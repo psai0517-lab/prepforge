@@ -1,0 +1,41 @@
+# PrepForge Profile
+# Copy this to data/profile.yml and fill it in.
+
+candidate:
+  name: "Your Name"
+  current_title: "Senior Data Engineer"
+  years_experience: 8
+  location: "Austin, TX"
+
+target:
+  companies:
+    - name: "Apple"
+      role: "Data Engineer"
+      level: "ICT5"           # Apple: ICT2-ICT6 | Google: L3-L8 | Amazon: L4-L8 | Netflix: L4-L7
+      level_universal: "Staff" # Junior | Mid | Senior | Staff | Principal
+      priority: 1
+    - name: "Netflix"
+      role: "Data Engineer 5"
+      level: "L5"
+      level_universal: "Staff"
+      priority: 2
+
+strengths:
+  - "Apache Spark (advanced internals)"
+  - "CDC pipeline architecture"
+  - "Real-time streaming with Flink and Kafka"
+  - "AWS cloud-native data platform"
+
+gaps:
+  - "System design at petabyte scale"
+  - "dbt transformation frameworks"
+  - "Graph algorithms"
+
+behavioral_themes:
+  - "Cross-functional platform ownership"
+  - "Managing ambiguity in data contracts"
+  - "Mentoring junior engineers"
+
+story_bank_path: "data/story-bank.md"
+tracker_path: "data/tracker.md"
+history_dir: "data/history"
