@@ -14,10 +14,11 @@ allowed-tools: Read, Write, Bash, WebSearch
 |-------|------|
 | (empty / no args) | `onboarding` — check setup, show menu |
 | `plan <company> <role> <level>` | `plan` — generate personalized study plan |
-| `mock [domain] [company]` | `mock` — interactive mock interview session |
-| `system-design <topic> [company]` | `system-design` — full system design round |
+| `learn <topic> [depth]` | `learn` — **interactive Socratic tutoring on any topic** |
+| `mock [domain] [company]` | `mock` — interactive mock interview session (scored) |
+| `system-design <topic> [company]` | `system-design` — full system design round with rubric |
 | `behavioral [company]` | `behavioral` — STAR+R behavioral practice |
-| `drill <domain>` | `drill` — rapid-fire concept flashcards |
+| `drill <domain>` | `drill` — rapid-fire adaptive concept drills |
 | `debrief` | `debrief` — analyze session history, surface gaps |
 | `ingest` | `ingest` — add real interview experiences to local DB |
 | `resume` or `resume update` | `resume` — view or update your resume/CV |
@@ -60,6 +61,7 @@ PrepForge — Ready
 
   /prep resume                          → View or update your resume/CV
   /prep plan <company> <role> <level>   → Personalized study plan with timeline
+  /prep learn <topic>                   → Interactive tutoring on any topic (Spark, SQL, Kafka, DSA...)
   /prep mock [domain] [company]         → Mock interview session (scored)
   /prep system-design <topic>           → Full system design round with rubric
   /prep behavioral [company]            → STAR+R behavioral practice
@@ -67,7 +69,8 @@ PrepForge — Ready
   /prep debrief                         → Gap analysis from session history
   /prep ingest                          → Add real interview Q&As to local DB
 
-Tip: Add your resume first (/prep resume update), then /prep plan to get your roadmap.
+Tip: Add your resume first (/prep resume update), then /prep plan for your roadmap,
+     then /prep learn <topic> to start working through it interactively.
 ```
 
 ## Context Loading by Mode
@@ -78,6 +81,7 @@ Load the following files before executing each mode:
 |------|--------------|
 | `resume` | `modes/resume.md` + `data/resume.md` (if exists) |
 | `plan` | `data/profile.yml` + `data/resume.md` (if exists) + `modes/_shared.md` + `modes/plan.md` + matching `domain-profiles/{company}-{role}.md` (if exists) |
+| `learn` | `data/profile.yml` + `modes/_shared.md` + `modes/learn.md` |
 | `mock` | `data/profile.yml` + `data/resume.md` (if exists) + `data/tracker.md` + `modes/_shared.md` + `modes/mock.md` + matching domain profile |
 | `system-design` | `data/profile.yml` + `data/resume.md` (if exists) + `modes/_shared.md` + `modes/system-design.md` + matching domain profile |
 | `behavioral` | `data/profile.yml` + `data/resume.md` (if exists) + `data/story-bank.md` + `modes/_shared.md` + `modes/behavioral.md` + matching domain profile |
