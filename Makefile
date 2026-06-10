@@ -26,8 +26,8 @@ setup: ui-install ## First-time project setup
 ui-install: ## Install UI dependencies
 	cd ui && pnpm install
 
-ui-dev: ## Start the UI development server
-	cd ui && pnpm dev
+ui-dev: ## Start the UI dev server + API server (requires ANTHROPIC_API_KEY in ui/.env)
+	cd ui && npm run dev
 
 ui-build: ## Build the UI for production
 	cd ui && pnpm build
