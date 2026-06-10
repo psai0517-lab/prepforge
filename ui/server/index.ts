@@ -68,6 +68,97 @@ async function startServer() {
     }
   });
 
+  // ── Session streaming endpoint ────────────────────────────────────────────
+  const skillRoot = path.resolve(__dirname, "..", "..", ".claude", "skills", "prep");
+
+  function loadModeFile(mode: string): string {
+    try {
+      return readFileSync(path.join(skillRoot, "modes", `${mode}.md`), "utf8");
+    } catch {
+      return "";
+    }
+  }
+
+  function buildSystemPrompt(
+    mode: string,
+    company: string,
+    domain: string,
+    profileRaw: string,
+  ): string {
+    const shared = loadModeFile("_shared");
+    const modeContent = loadModeFile(mode);
+    const companyLabel = company.charAt(0).toUpperCase() + company.slice(1);
+    const domainLabel = domain || "general";
+
+    return `You are conducting a real ${companyLabel} ${mode} interview for a ${domainLabel} role.
+
+CANDIDATE PROFILE:
+${profileRaw}
+
+SHARED PRINCIPLES:
+${shared}
+
+MODE INSTRUCTIONS:
+${modeContent}
+
+CRITICAL RULES:
+- Stay in character as the ${companyLabel} interviewer at all times.
+- Be direct and concise — this is a real interview, not a tutorial.
+- Ask ONE question at a time. Wait for the candidate to respond before continuing.
+- Calibrate to ICT5/Staff level at ${companyLabel}.
+- Start immediately: introduce yourself in one sentence, then ask your first question.
+- Do not explain what you are going to do — just do it.`;
+  }
+
+  app.post("/api/session/message", async (req, res) => {
+    const { messages, mode, company, domain } = req.body as {
+      messages: { role: "user" | "assistant"; content: string }[];
+      mode: string;
+      company: string;
+      domain: string;
+    };
+
+    let profileRaw = "";
+    try {
+      profileRaw = readFileSync(path.join(dataRoot, "profile.yml"), "utf8");
+    } catch { /* no profile */ }
+
+    const systemPrompt = buildSystemPrompt(mode, company, domain, profileRaw);
+
+    // SSE headers
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    try {
+      const stream = await anthropic.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: messages.length > 0 ? messages : [
+          { role: "user", content: "Begin the interview." },
+        ],
+        stream: true,
+      });
+
+      for await (const event of stream) {
+        if (
+          event.type === "content_block_delta" &&
+          event.delta.type === "text_delta"
+        ) {
+          res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+        }
+      }
+      res.write("data: [DONE]\n\n");
+    } catch (err) {
+      console.error("Session stream error:", err);
+      res.write(`data: ${JSON.stringify({ error: "Stream failed" })}\n\n`);
+    }
+
+    res.end();
+  });
+
   // ── Evaluation endpoint ────────────────────────────────────────────────────
   app.post("/api/evaluate", async (req, res) => {
     const { question, modelAnswer, userAnswer } = req.body as {

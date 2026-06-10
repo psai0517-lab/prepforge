@@ -1,130 +1,269 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
+import { useLocation } from "wouter";
 
-const features = [
+const MODES = [
   {
-    title: "Split-Screen Layout",
-    description: "Left pane displays the interviewer's prompt, current question, and visual timer. Right pane is the candidate's workspace for coding or responding.",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-      </svg>
-    ),
-  },
-  {
-    title: "Code Editor Integration",
-    description: "Monaco Editor with syntax highlighting for technical mocks, allowing candidates to write actual code rather than just explaining solutions in text.",
+    id: "mock",
+    label: "Mock Interview",
+    description: "SQL, coding, or domain-specific technical round. Timed, scored.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
       </svg>
     ),
+    duration: "45 min",
   },
   {
-    title: "Voice Integration",
-    description: "Web Speech API for speech-to-text input, allowing candidates to speak their answers naturally. Dramatically increases realism of behavioral and mock interviews.",
+    id: "behavioral",
+    label: "Behavioral",
+    description: "STAR+R practice. Apple values framing, ownership, horizontal impact.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     ),
+    duration: "45 min",
   },
   {
-    title: "Company Persona Indicator",
-    description: "Visual indicator showing which company persona the AI interviewer is adopting — Apple's terse style, Netflix's open-ended approach, or Amazon's LP-focused format.",
+    id: "system-design",
+    label: "System Design",
+    description: "Design a data system at Apple scale. Privacy-first, petabyte framing.",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
       </svg>
     ),
-  },
-  {
-    title: "Real-Time Scoring",
-    description: "Live scoring indicators that track whether the candidate asks clarifying questions, names tradeoffs, raises edge cases, and communicates clearly under pressure.",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
-  },
-  {
-    title: "Session Timer",
-    description: "Visual countdown timer matching real interview durations (45 min for mock, 45 min for system design). Includes per-question time tracking for post-session analysis.",
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    duration: "60 min",
   },
 ];
 
+const COMPANIES = [
+  { id: "apple", label: "Apple" },
+  { id: "netflix", label: "Netflix" },
+  { id: "amazon", label: "Amazon" },
+  { id: "google", label: "Google" },
+];
+
+const DOMAINS: Record<string, { id: string; label: string }[]> = {
+  mock: [
+    { id: "sql", label: "SQL" },
+    { id: "spark", label: "Spark Internals" },
+    { id: "kafka", label: "Kafka" },
+    { id: "dsa", label: "DSA (Python)" },
+    { id: "data-modeling", label: "Data Modeling" },
+  ],
+  behavioral: [],
+  "system-design": [
+    { id: "device-telemetry", label: "Device Telemetry Pipeline" },
+    { id: "data-deletion", label: "Data Deletion at Scale" },
+    { id: "app-store-analytics", label: "App Store Analytics" },
+    { id: "ml-feature-store", label: "Petabyte Lakehouse / Feature Store" },
+    { id: "cdc-pipeline", label: "Cross-Region CDC Pipeline" },
+  ],
+};
+
 export function PracticeSection() {
+  const [, navigate] = useLocation();
+  const [selectedMode, setSelectedMode] = useState<string | null>(null);
+  const [selectedCompany, setSelectedCompany] = useState("apple");
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [customTopic, setCustomTopic] = useState("");
+
+  const mode = MODES.find((m) => m.id === selectedMode);
+  const domains = selectedMode ? DOMAINS[selectedMode] : [];
+  const needsDomain = selectedMode === "mock";
+  const needsTopic = selectedMode === "system-design";
+  const canStart =
+    selectedMode &&
+    selectedCompany &&
+    (!needsDomain || selectedDomain) &&
+    (!needsTopic || selectedDomain || customTopic.trim());
+
+  function handleStart() {
+    if (!canStart) return;
+    const topic = needsTopic ? (selectedDomain || customTopic.trim()) : "";
+    const domain = needsDomain ? selectedDomain : "";
+    navigate(`/session?mode=${selectedMode}&company=${selectedCompany}&domain=${domain}&topic=${topic}`);
+  }
+
   return (
     <section id="practice" className="py-20 relative">
       <div className="absolute inset-0 blueprint-grid opacity-20" />
 
-      <div className="container relative z-10">
-        <div className="grid lg:grid-cols-12 gap-12">
-          {/* Right column - section header (reversed for visual variety) */}
-          <div className="lg:col-span-5 lg:order-2">
-            <div className="lg:sticky lg:top-24">
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+      <div className="container relative z-10 max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          <span className="font-mono text-xs tracking-widest uppercase text-accent">
+            03 — Practice
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl text-foreground mt-3 leading-tight">
+            Start a <span className="italic">Session</span>
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-xl">
+            Choose a mode, configure your target, and drop into a live interview with your Apple ICT5 interviewer.
+          </p>
+        </motion.div>
+
+        {/* Step 1 — Mode */}
+        <div className="mb-8">
+          <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
+            01 · Select mode
+          </p>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {MODES.map((m, i) => (
+              <motion.button
+                key={m.id}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ delay: i * 0.07, duration: 0.4 }}
+                onClick={() => {
+                  setSelectedMode(m.id);
+                  setSelectedDomain("");
+                  setCustomTopic("");
+                }}
+                className={`text-left p-5 rounded-lg border-2 transition-all duration-150 ${
+                  selectedMode === m.id
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-card hover:border-primary/30 hover:bg-muted/40"
+                }`}
               >
-                <span className="font-mono text-xs tracking-widest uppercase text-accent">
-                  03 — Practice Interface
-                </span>
-                <h2 className="font-serif text-3xl sm:text-4xl text-foreground mt-3 leading-tight">
-                  Mock & Behavioral <span className="italic">Sessions</span>
-                </h2>
-                <p className="text-muted-foreground mt-4 leading-relaxed">
-                  The current terminal interface requires users to read text and type responses.
-                  A web UI can make this feel much more like a real interview with split-screen
-                  layouts, code editors, and voice integration.
-                </p>
-
-                {/* Practice interface mockup */}
-                <div className="mt-6 rounded-lg overflow-hidden border border-border shadow-sm">
-                  <img
-                    src="https://d2xsxph8kpxj0f.cloudfront.net/310519663489379363/aoaSqExMPNHViFhDQ4c4fJ/section-practice-kxzpReRSf5wCK5ndPNRdrk.webp"
-                    alt="Split-screen practice interface with interviewer chat and code editor"
-                    className="w-full h-auto"
-                  />
+                <div className={`w-9 h-9 rounded-md flex items-center justify-center mb-3 ${
+                  selectedMode === m.id
+                    ? "bg-primary/15 text-primary"
+                    : "bg-muted text-muted-foreground"
+                }`}>
+                  {m.icon}
                 </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Left column - feature cards */}
-          <div className="lg:col-span-7 lg:order-1">
-            <div className="grid sm:grid-cols-2 gap-4">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.06, ease: [0.23, 1, 0.32, 1] }}
-                >
-                  <Card className="h-full border border-border hover:border-accent/30 transition-all duration-200 hover:shadow-sm group">
-                    <CardContent className="p-5">
-                      <div className="w-9 h-9 rounded-md bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-3 group-hover:bg-accent/15 transition-colors">
-                        {feature.icon}
-                      </div>
-                      <h3 className="font-semibold text-foreground text-sm mb-1.5">{feature.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                <div className="font-medium text-sm text-foreground mb-1">{m.label}</div>
+                <div className="text-xs text-muted-foreground leading-snug mb-2">{m.description}</div>
+                <div className="text-xs font-mono text-accent">{m.duration}</div>
+              </motion.button>
+            ))}
           </div>
         </div>
+
+        {/* Step 2 — Config (only shown after mode selected) */}
+        {selectedMode && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6 mb-8"
+          >
+            {/* Company */}
+            <div>
+              <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
+                02 · Company
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {COMPANIES.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCompany(c.id)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-150 ${
+                      selectedCompany === c.id
+                        ? "border-primary bg-primary/5 text-foreground"
+                        : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Domain (mock only) */}
+            {needsDomain && (
+              <div>
+                <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
+                  03 · Domain
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {domains.map((d) => (
+                    <button
+                      key={d.id}
+                      onClick={() => setSelectedDomain(d.id)}
+                      className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-150 ${
+                        selectedDomain === d.id
+                          ? "border-primary bg-primary/5 text-foreground"
+                          : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Topic (system-design only) */}
+            {needsTopic && (
+              <div>
+                <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
+                  03 · Topic
+                </p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {domains.map((d) => (
+                    <button
+                      key={d.id}
+                      onClick={() => { setSelectedDomain(d.id); setCustomTopic(""); }}
+                      className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-150 ${
+                        selectedDomain === d.id
+                          ? "border-primary bg-primary/5 text-foreground"
+                          : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  value={customTopic}
+                  onChange={(e) => { setCustomTopic(e.target.value); setSelectedDomain(""); }}
+                  placeholder="Or type a custom topic…"
+                  className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+            )}
+
+            {/* Session summary + Start */}
+            <div className="flex items-center justify-between pt-2 border-t border-border">
+              <div className="text-sm text-muted-foreground">
+                {mode && (
+                  <span>
+                    <span className="text-foreground font-medium">{mode.label}</span>
+                    {" · "}
+                    {COMPANIES.find((c) => c.id === selectedCompany)?.label}
+                    {(selectedDomain || customTopic) && (
+                      <> · <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">
+                        {selectedDomain || customTopic}
+                      </span></>
+                    )}
+                    {" · "}{mode.duration}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={handleStart}
+                disabled={!canStart}
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity flex items-center gap-2"
+              >
+                Start Session
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );
