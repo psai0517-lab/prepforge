@@ -53,7 +53,7 @@ export const questions: Question[] = [
     id: "sql-m1",
     domain: "sql",
     difficulty: "medium",
-    question: "Write a query to find the second-highest salary. Handle ties correctly.",
+    question: "Write a query to find the second-highest salary. Handle ties correctly.\n\nTable: employees(id INT, name VARCHAR, salary INT)\nSample: (1,'Alice',100), (2,'Bob',100), (3,'Carol',80), (4,'Dave',60)\nExpected: 80",
     answer:
       "Use DENSE_RANK: SELECT salary FROM (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rk FROM employees) t WHERE rk = 2 LIMIT 1. The subquery approach (MAX where salary < MAX) breaks when multiple employees share the maximum — DENSE_RANK handles ties correctly.",
   },
@@ -69,7 +69,7 @@ export const questions: Question[] = [
     id: "sql-m3",
     domain: "sql",
     difficulty: "medium",
-    question: "You have a sessions table with start_time and end_time. Write a query to find all overlapping session pairs.",
+    question: "Write a query to find all overlapping session pairs.\n\nTable: sessions(id INT, user_id INT, start_time TIMESTAMP, end_time TIMESTAMP)\nSample: (1, u1, 10:00, 10:30), (2, u1, 10:15, 10:45), (3, u1, 11:00, 11:30)\nExpected: rows (1,2) — they overlap. (1,3) and (2,3) do not.",
     answer:
       "Self-join on overlap: SELECT a.id, b.id FROM sessions a JOIN sessions b ON a.id < b.id AND a.start_time < b.end_time AND b.start_time < a.end_time. The a.id < b.id prevents returning (A,B) and (B,A) as separate pairs. Two sessions overlap when neither ends before the other starts.",
   },
@@ -77,7 +77,7 @@ export const questions: Question[] = [
     id: "sql-h1",
     domain: "sql",
     difficulty: "hard",
-    question: "Write a recursive CTE to flatten a self-referencing employee org hierarchy.",
+    question: "Write a recursive CTE to flatten a self-referencing employee org hierarchy.\n\nTable: employees(id INT, name VARCHAR, manager_id INT nullable)\nSample: (1,'CEO',NULL), (2,'VP Eng',1), (3,'Staff DE',2), (4,'Sr DE',2), (5,'CTO',1)\nExpected: every employee with their depth (CEO=0, VP/CTO=1, Staff/Sr=2), ordered by depth.",
     answer:
       "WITH RECURSIVE org AS (SELECT id, name, manager_id, 0 AS depth FROM employees WHERE manager_id IS NULL UNION ALL SELECT e.id, e.name, e.manager_id, o.depth+1 FROM employees e JOIN org o ON e.manager_id = o.id) SELECT * FROM org ORDER BY depth. Anchor = root (no manager); recursive member joins each employee to its parent.",
   },
@@ -93,7 +93,7 @@ export const questions: Question[] = [
     id: "sql-h3",
     domain: "sql",
     difficulty: "hard",
-    question: "Given a funnel table (user_id, step, timestamp), find users who completed steps 1→2→3 in order within 7 days of step 1.",
+    question: "Find users who completed steps 1→2→3 in order within 7 days of their step 1.\n\nTable: funnel(user_id INT, step INT, ts TIMESTAMP)\nSample:\n  user 1: step1@day0, step2@day3, step3@day6  → include\n  user 2: step1@day0, step3@day2, step2@day5  → exclude (wrong order)\n  user 3: step1@day0, step2@day2, step3@day10 → exclude (outside 7 days)",
     answer:
       "SELECT s1.user_id FROM funnel s1 JOIN funnel s2 ON s1.user_id=s2.user_id AND s2.step=2 AND s2.ts>s1.ts JOIN funnel s3 ON s1.user_id=s3.user_id AND s3.step=3 AND s3.ts>s2.ts WHERE s1.step=1 AND s3.ts <= s1.ts + INTERVAL '7 days'. If users can repeat steps, add MIN() subqueries to capture the earliest occurrence of each step — otherwise fan-out inflates results.",
   },
@@ -243,7 +243,7 @@ export const questions: Question[] = [
     id: "dsa-e1",
     domain: "dsa",
     difficulty: "easy",
-    question: "Implement two_sum(nums, target) in O(n) time.",
+    question: "Implement two_sum(nums, target) in O(n) time.\n\nInput: nums=[2,7,11,15], target=9\nOutput: [0,1]  (nums[0]+nums[1]==9)\n\nAssume exactly one solution exists. Return the indices.",
     answer:
       "Use a hash map: iterate nums, for each n check if (target-n) is in seen; if yes return the pair, else add n to seen. One pass, O(n) time, O(n) space. def two_sum(nums, target): seen = {}; [seen.setdefault(n, i) for i, n in enumerate(nums)]; return next(([seen[target-n], i] for i, n in enumerate(nums) if target-n in seen and seen[target-n] != i), [])",
   },
@@ -267,7 +267,7 @@ export const questions: Question[] = [
     id: "dsa-m1",
     domain: "dsa",
     difficulty: "medium",
-    question: "Write a function to merge two sorted arrays without using sort(). What's the time complexity?",
+    question: "Write merge(a, b) to merge two sorted arrays without using sort(). What's the time complexity?\n\nInput: a=[1,3,5], b=[2,4,6]\nOutput: [1,2,3,4,5,6]",
     answer:
       "Two-pointer: i=j=0, compare a[i] vs b[j], append the smaller, advance that pointer. O(m+n) time, O(m+n) space. def merge(a, b): res, i, j = [], 0, 0; [res.append(a[i] if i<len(a) and (j>=len(b) or a[i]<=b[j]) else b[j]) or [0] for _ in range(len(a)+len(b))]; — cleaner with explicit while loop. Append remaining slice from whichever array has elements left.",
   },
@@ -275,7 +275,7 @@ export const questions: Question[] = [
     id: "dsa-m2",
     domain: "dsa",
     difficulty: "medium",
-    question: "Given a list of meeting intervals, find the minimum number of conference rooms required.",
+    question: "Given a list of meeting intervals [start, end], find the minimum number of conference rooms required.\n\nInput: [[0,30],[5,10],[15,20]]\nOutput: 2\n(Meeting 1 overlaps with both 2 and 3, but 2 and 3 don't overlap with each other.)",
     answer:
       "Sort by start time. Use a min-heap of end times. For each meeting: if heap[0] <= meeting.start, pop (room freed). Push meeting.end. Heap size = rooms in use. Final heap size = minimum rooms needed. O(n log n). Key insight: you only need to know when the earliest-ending meeting finishes, not which specific room it was.",
   },
@@ -291,7 +291,7 @@ export const questions: Question[] = [
     id: "dsa-h1",
     domain: "dsa",
     difficulty: "hard",
-    question: "Write BFS to find the shortest path in a grid with obstacles (0=open, 1=blocked).",
+    question: "Write BFS to find the shortest path from top-left to bottom-right in a grid (0=open, 1=blocked). Return path length, or -1 if no path.\n\nInput:\n[[0,0,0],\n [1,1,0],\n [0,0,0]]\nOutput: 5  (right→right→down→down→... shortest open path)",
     answer:
       "from collections import deque\ndef shortest_path(grid):\n    if not grid or grid[0][0]: return -1\n    R, C = len(grid), len(grid[0])\n    q, visited = deque([(0,0,1)]), {(0,0)}\n    while q:\n        r,c,d = q.popleft()\n        if r==R-1 and c==C-1: return d\n        for dr,dc in [(0,1),(0,-1),(1,0),(-1,0)]:\n            nr,nc = r+dr,c+dc\n            if 0<=nr<R and 0<=nc<C and not grid[nr][nc] and (nr,nc) not in visited:\n                visited.add((nr,nc)); q.append((nr,nc,d+1))\n    return -1\nBFS guarantees shortest path. Mark visited before enqueuing to prevent O(n²) duplicates.",
   },
