@@ -21,7 +21,7 @@ Built on [Claude Code](https://claude.ai/code). No web app. No subscriptions. Ev
 
 ---
 
-## Setup
+## Quick Start
 
 ### 1. Install Claude Code
 ```bash
@@ -60,6 +60,39 @@ Then invoke the skill:
 
 ---
 
+## UI Guide
+
+An interactive web application documenting the recommended UI design for PrepForge. View the live version at **[prepforgeui-aoasqexm.manus.space](https://prepforgeui-aoasqexm.manus.space)**.
+
+The UI guide covers:
+- **Architecture** — CLI-to-web transition plan with layered architecture
+- **Dashboard & Layout** — Core navigation structure with interactive charts
+- **Practice Interface** — Mock interview and behavioral session UI features
+- **System Design Canvas** — Interactive whiteboard with drag-and-drop components
+- **Rapid-Fire Drills** — Gamified flashcard system with spaced repetition
+- **Tech Stack** — Recommended technologies with priority classifications
+
+See [`ui/README.md`](ui/README.md) for full details on the UI project.
+
+---
+
+## Makefile
+
+A root-level Makefile is provided for common tasks. Run `make help` to see all available commands:
+
+```bash
+make setup        # First-time project setup (installs UI deps)
+make ui-dev       # Start the UI development server
+make ui-build     # Build the UI for production
+make ui-preview   # Preview the production build locally
+make ui-lint      # Run TypeScript type checking
+make ui-format    # Format code with Prettier
+make ui-check     # Run all checks
+make ui-clean     # Remove build artifacts and node_modules
+```
+
+---
+
 ## Company Coverage
 
 Domain profiles (interview loop structure, tech stack, interviewer persona, real questions) are included for:
@@ -91,12 +124,14 @@ prepforge/
 │   └── ingest.md
 ├── domain-profiles/                # company + role knowledge bases
 ├── scripts/session_manager.py      # deterministic state management
+├── ui/                             # interactive UI guide (React + TypeScript)
 ├── data/                           # your data (gitignored)
 │   ├── profile.yml
 │   ├── tracker.md
 │   ├── story-bank.md
 │   └── history/
-└── templates/                      # starter files
+├── templates/                      # starter files
+└── Makefile                        # common development tasks
 ```
 
 **Your data lives in `data/` and is gitignored.** The system layer (`modes/`, `domain-profiles/`, `scripts/`) can be updated without touching your progress.
