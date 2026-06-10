@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import express from "express";
+import { readFileSync } from "fs";
 import { createServer } from "http";
+import yaml from "js-yaml";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -9,11 +11,62 @@ const __dirname = path.dirname(__filename);
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+// Parse markdown table rows from tracker.md
+function parseTracker(md: string) {
+  const lines = md.split("\n").filter((l) => l.startsWith("|") && !l.match(/^[\|\s\-]+$/));
+  // Skip header row
+  const rows = lines.slice(1);
+  return rows
+    .map((row) => {
+      const cells = row.split("|").map((c) => c.trim()).filter(Boolean);
+      if (cells.length < 5) return null;
+      const [date, mode, domain, topic, scoreRaw, weakAreas = "", notes = ""] = cells;
+      const scoreMatch = scoreRaw.match(/(\d+)\s*\/\s*(\d+)/);
+      if (!scoreMatch) return null;
+      return {
+        date,
+        mode,
+        domain,
+        topic,
+        score: parseInt(scoreMatch[1]),
+        outOf: parseInt(scoreMatch[2]),
+        weakAreas,
+        notes,
+      };
+    })
+    .filter(Boolean);
+}
+
 async function startServer() {
   const app = express();
   const server = createServer(app);
 
   app.use(express.json());
+
+  // ── Data root (repo root, two levels up from ui/server/) ──────────────────
+  const dataRoot = path.resolve(__dirname, "..", "..", "data");
+
+  // ── Profile endpoint ───────────────────────────────────────────────────────
+  app.get("/api/profile", (_req, res) => {
+    try {
+      const raw = readFileSync(path.join(dataRoot, "profile.yml"), "utf8");
+      const profile = yaml.load(raw);
+      res.json(profile);
+    } catch {
+      res.status(404).json({ error: "profile.yml not found" });
+    }
+  });
+
+  // ── Tracker endpoint ───────────────────────────────────────────────────────
+  app.get("/api/tracker", (_req, res) => {
+    try {
+      const raw = readFileSync(path.join(dataRoot, "tracker.md"), "utf8");
+      const sessions = parseTracker(raw);
+      res.json(sessions);
+    } catch {
+      res.json([]);
+    }
+  });
 
   // ── Evaluation endpoint ────────────────────────────────────────────────────
   app.post("/api/evaluate", async (req, res) => {
