@@ -202,11 +202,14 @@ Return JSON with exactly these fields:
       });
 
       const raw = (message.content[0] as { text: string }).text.trim();
-      const result = JSON.parse(raw);
+      // Strip markdown code fences if present (```json ... ``` or ``` ... ```)
+      const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+      const result = JSON.parse(cleaned);
       res.json(result);
     } catch (err) {
-      console.error("Evaluation error:", err);
-      res.status(500).json({ error: "Evaluation failed" });
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Evaluation error:", msg);
+      res.status(500).json({ error: `Evaluation failed: ${msg}` });
     }
   });
 

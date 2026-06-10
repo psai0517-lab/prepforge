@@ -142,11 +142,20 @@ export function DrillSection() {
         }),
       });
 
-      if (!res.ok) throw new Error("API error");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Server error ${res.status}`);
+      }
       const result: EvalResult = await res.json();
       setEvalResult(result);
-    } catch {
-      setEvalError("Couldn't reach the evaluation server. Is the API server running?");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const isNetwork = msg.includes("fetch") || msg.includes("Failed to fetch");
+      setEvalError(
+        isNetwork
+          ? "API server not reachable — run `make ui-dev` to start both servers."
+          : `Evaluation error: ${msg}`,
+      );
     } finally {
       setEvaluating(false);
     }
