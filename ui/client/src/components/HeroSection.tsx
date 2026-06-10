@@ -6,14 +6,8 @@ export function HeroSection() {
       {/* Blueprint grid background */}
       <div className="absolute inset-0 blueprint-grid opacity-60" />
       
-      {/* Hero background image */}
-      <div className="absolute inset-0 opacity-30">
-        <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663489379363/aoaSqExMPNHViFhDQ4c4fJ/hero-blueprint-92ZLRrc5Uut7MmB9mmDs4i.webp"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-      </div>
+      {/* Hero background gradient */}
+      <div className="absolute inset-0 opacity-40 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
 
       <div className="container relative z-10">
         <div className="max-w-4xl mx-auto text-center">

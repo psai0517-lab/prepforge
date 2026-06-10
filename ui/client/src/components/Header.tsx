@@ -37,7 +37,7 @@ export function Header() {
           </div>
           <span className="font-serif text-xl text-foreground italic">PrepForge</span>
           <span className="hidden sm:inline-block text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">
-            UI Guide
+            beta
           </span>
         </a>
 
