@@ -392,9 +392,19 @@ export function DrillSection() {
                       </div>
 
                       {/* Question */}
-                      <h3 className="text-lg font-medium text-foreground leading-relaxed mb-5">
-                        {current.question}
-                      </h3>
+                      <div className="mb-5 space-y-2">
+                        {current.question.split("\n").map((line, i) =>
+                          i === 0 ? (
+                            <h3 key={i} className="text-lg font-medium text-foreground leading-relaxed">
+                              {line}
+                            </h3>
+                          ) : line.trim() ? (
+                            <p key={i} className="text-sm font-mono text-muted-foreground bg-muted/50 px-3 py-1 rounded">
+                              {line}
+                            </p>
+                          ) : null
+                        )}
+                      </div>
 
                       {/* Answer input */}
                       {!evalResult && (
