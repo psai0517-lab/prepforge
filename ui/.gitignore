@@ -1,3 +1,5 @@
 # UI dependencies
 node_modules/
 .manus-logs/
+.env
+dist/
